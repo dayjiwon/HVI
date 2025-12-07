@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import React from "react";
 
-import User1Main from "./pages/main/User1Main";
-import User2Main from "./pages/main/User2Main";
+import MainDad from "./pages/home/MainDad";
+import MainMom from "./pages/home/MainMom";
 
 export default function App() {
     const [phase, setPhase] = useState<"face" | "pin" | "main">("face");
@@ -168,8 +169,8 @@ export default function App() {
 
     // 3. 메인 UI → 사용자별 분기
     if (phase === "main") {
-        if (user === "user1") return <User1Main />;
-        if (user === "user2") return <User2Main />;
+        if (user === "user1") return <MainDad />;
+        if (user === "user2") return <MainMom />;
     }
 
     return null;

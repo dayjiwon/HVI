@@ -1,3 +1,4 @@
+import React from "react";
 import { motion } from 'motion/react';
 import { ArrowUp, ArrowDown, Smile } from 'lucide-react';
 

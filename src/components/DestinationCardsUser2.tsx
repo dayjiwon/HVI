@@ -1,3 +1,4 @@
+import React from "react";
 import { motion } from 'motion/react';
 import { Home, School, Coffee, MapPin } from 'lucide-react';
 
