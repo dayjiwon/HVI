@@ -1,6 +1,6 @@
 import React from "react";
-import { motion } from 'motion/react';
-import { ArrowUp, ArrowDown, Smile } from 'lucide-react';
+import { motion } from "framer-motion";
+import { ArrowUp, ArrowDown, Smile } from "lucide-react";
 
 export function SeatVisualizationUser2() {
   return (
@@ -26,14 +26,19 @@ export function SeatVisualizationUser2() {
             animate={{ y: [0, -5, 0] }}
             transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
           />
-          
+
           {/* Seat Cushion */}
           <motion.div
             className="w-40 h-24 bg-gradient-to-br from-purple-100 to-purple-200 rounded-[35px] shadow-[inset_-4px_-4px_12px_rgba(255,255,255,0.8),inset_4px_4px_12px_rgba(147,51,234,0.2),0_8px_24px_rgba(147,51,234,0.15)] mt-2"
             animate={{ y: [0, -5, 0] }}
-            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: 0.1 }}
+            transition={{
+              duration: 3,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: 0.1,
+            }}
           />
-          
+
           {/* Cute Avatar */}
           <motion.div
             className="absolute -right-6 top-12 w-12 h-12 bg-gradient-to-br from-yellow-200 to-yellow-300 rounded-full shadow-[0_4px_16px_rgba(0,0,0,0.1)]"

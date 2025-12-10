@@ -1,7 +1,7 @@
 import React from "react";
-import { useState } from 'react';
-import { motion } from 'motion/react';
-import { Mic } from 'lucide-react';
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { Mic } from "lucide-react";
 
 export function VoiceAssistant() {
   const [isListening, setIsListening] = useState(false);
@@ -24,16 +24,20 @@ export function VoiceAssistant() {
           >
             {/* Character Blob */}
             <motion.div
-              animate={isListening ? {
-                scale: [1, 1.1, 1],
-                rotate: [0, 5, -5, 0]
-              } : {
-                y: [0, -8, 0]
-              }}
+              animate={
+                isListening
+                  ? {
+                      scale: [1, 1.1, 1],
+                      rotate: [0, 5, -5, 0],
+                    }
+                  : {
+                      y: [0, -8, 0],
+                    }
+              }
               transition={{
                 duration: 2,
                 repeat: Infinity,
-                ease: "easeInOut"
+                ease: "easeInOut",
               }}
               className="w-20 h-20 bg-gradient-to-br from-pink-300 to-purple-300 rounded-full shadow-[0_8px_28px_rgba(236,72,153,0.4)] flex items-center justify-center relative"
             >
@@ -45,29 +49,48 @@ export function VoiceAssistant() {
                   className="absolute inset-0 bg-pink-400 rounded-full"
                 />
               )}
-              
+
               {/* Character Face */}
               <div className="relative z-10 flex flex-col items-center justify-center">
                 <div className="flex gap-2 mb-1">
                   <motion.div
-                    animate={isListening ? {
-                      scaleY: [1, 1.5, 1]
-                    } : {}}
-                    transition={{ duration: 0.3, repeat: isListening ? Infinity : 0 }}
+                    animate={
+                      isListening
+                        ? {
+                            scaleY: [1, 1.5, 1],
+                          }
+                        : {}
+                    }
+                    transition={{
+                      duration: 0.3,
+                      repeat: isListening ? Infinity : 0,
+                    }}
                     className="w-2 h-2 bg-gray-800 rounded-full"
                   />
                   <motion.div
-                    animate={isListening ? {
-                      scaleY: [1, 1.5, 1]
-                    } : {}}
-                    transition={{ duration: 0.3, repeat: isListening ? Infinity : 0, delay: 0.1 }}
+                    animate={
+                      isListening
+                        ? {
+                            scaleY: [1, 1.5, 1],
+                          }
+                        : {}
+                    }
+                    transition={{
+                      duration: 0.3,
+                      repeat: isListening ? Infinity : 0,
+                      delay: 0.1,
+                    }}
                     className="w-2 h-2 bg-gray-800 rounded-full"
                   />
                 </div>
                 <motion.div
-                  animate={isListening ? {
-                    scaleX: [1, 1.2, 1]
-                  } : {}}
+                  animate={
+                    isListening
+                      ? {
+                          scaleX: [1, 1.2, 1],
+                        }
+                      : {}
+                  }
                   className="w-8 h-4 border-b-4 border-gray-800 rounded-full"
                 />
               </div>
@@ -83,16 +106,20 @@ export function VoiceAssistant() {
           <div className="flex-1 relative">
             {/* Bubble Tail */}
             <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-6 h-6 bg-gradient-to-br from-pink-100 to-purple-100 rotate-45 rounded-lg" />
-            
+
             {/* Bubble Content */}
             <motion.div
-              animate={isListening ? {
-                boxShadow: [
-                  '0 4px 20px rgba(236,72,153,0.2)',
-                  '0 4px 30px rgba(236,72,153,0.4)',
-                  '0 4px 20px rgba(236,72,153,0.2)'
-                ]
-              } : {}}
+              animate={
+                isListening
+                  ? {
+                      boxShadow: [
+                        "0 4px 20px rgba(236,72,153,0.2)",
+                        "0 4px 30px rgba(236,72,153,0.4)",
+                        "0 4px 20px rgba(236,72,153,0.2)",
+                      ],
+                    }
+                  : {}
+              }
               transition={{ duration: 1.5, repeat: Infinity }}
               className="bg-gradient-to-br from-pink-100 to-purple-100 rounded-[32px] px-8 py-4 shadow-[0_4px_20px_rgba(0,0,0,0.08)]"
             >
@@ -123,7 +150,7 @@ export function VoiceAssistant() {
             >
               <span className="text-2xl">🎵</span>
             </motion.button>
-            
+
             <motion.button
               whileHover={{ scale: 1.1, rotate: -10 }}
               whileTap={{ scale: 0.9 }}
@@ -142,13 +169,13 @@ export function VoiceAssistant() {
                 key={i}
                 animate={{
                   scaleY: [1, 2, 1],
-                  opacity: [0.3, 1, 0.3]
+                  opacity: [0.3, 1, 0.3],
                 }}
                 transition={{
                   duration: 1,
                   repeat: Infinity,
                   delay: i * 0.1,
-                  ease: "easeInOut"
+                  ease: "easeInOut",
                 }}
                 className="w-1 h-6 bg-gradient-to-t from-pink-400 to-purple-400 rounded-full"
               />

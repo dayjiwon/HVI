@@ -1,18 +1,18 @@
 import React from "react";
-import { motion } from 'framer-motion';
-import { School, Coffee, Home, MapPin } from 'lucide-react';
+import { motion } from "framer-motion";
+import { School, Coffee, Home, MapPin } from "lucide-react";
 
 const destinations = [
-  { icon: School, label: '인하대학교', color: '#2D9CFF' },
-  { icon: Coffee, label: '스타벅스 송도점', color: '#00B5F5' },
-  { icon: Home, label: '자택', color: '#2D9CFF' },
+  { icon: School, label: "인하대학교", color: "#2D9CFF" },
+  { icon: Coffee, label: "스타벅스 송도점", color: "#00B5F5" },
+  { icon: Home, label: "자택", color: "#2D9CFF" },
 ];
 
 export default function DestinationCards() {
   return (
     <div className="flex flex-col items-center justify-center h-full gap-4 px-6">
       <div className="text-sm text-gray-600 mb-2">빠른 목적지</div>
-      
+
       <div className="flex flex-col gap-3 w-full">
         {destinations.map((dest, index) => {
           const Icon = dest.icon;
@@ -40,7 +40,7 @@ export default function DestinationCards() {
               >
                 <Icon className="w-5 h-5" style={{ color: dest.color }} />
               </div>
-              
+
               <div className="flex-1 text-left">
                 <div className="text-sm text-gray-800">{dest.label}</div>
               </div>

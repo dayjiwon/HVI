@@ -1,7 +1,7 @@
 import React from "react";
-import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Mic } from 'lucide-react';
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { Mic } from "lucide-react";
 
 export default function VoiceInteraction() {
   const [isListening, setIsListening] = useState(false);
@@ -43,15 +43,15 @@ export default function VoiceInteraction() {
           <motion.div
             className={`relative w-16 h-16 rounded-full flex items-center justify-center transition-all ${
               isListening
-                ? 'bg-[#2D9CFF] shadow-lg shadow-[#2D9CFF]/50'
-                : 'bg-white shadow-md hover:shadow-lg border border-gray-200'
+                ? "bg-[#2D9CFF] shadow-lg shadow-[#2D9CFF]/50"
+                : "bg-white shadow-md hover:shadow-lg border border-gray-200"
             }`}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
             <Mic
               className={`w-7 h-7 ${
-                isListening ? 'text-white' : 'text-gray-600'
+                isListening ? "text-white" : "text-gray-600"
               }`}
             />
           </motion.div>
@@ -75,7 +75,7 @@ export default function VoiceInteraction() {
                   duration: 0.5,
                   repeat: Infinity,
                   delay: i * 0.05,
-                  ease: "easeInOut"
+                  ease: "easeInOut",
                 }}
               />
             ))}

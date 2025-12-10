@@ -1,6 +1,6 @@
 import React from "react";
-import { motion } from 'motion/react';
-import { Home, School, Coffee, MapPin } from 'lucide-react';
+import { motion } from "framer-motion";
+import { Home, School, Coffee, MapPin } from "lucide-react";
 
 interface Destination {
   id: string;
@@ -14,42 +14,42 @@ interface Destination {
 
 const destinations: Destination[] = [
   {
-    id: 'school',
-    name: '학교',
-    icon: 'school',
-    emoji: '🏫',
-    color: 'from-yellow-200 to-yellow-300',
-    distance: '2.5km',
-    time: '8분'
+    id: "school",
+    name: "학교",
+    icon: "school",
+    emoji: "🏫",
+    color: "from-yellow-200 to-yellow-300",
+    distance: "2.5km",
+    time: "8분",
   },
   {
-    id: 'starbucks',
-    name: '스타벅스',
-    icon: 'coffee',
-    emoji: '☕',
-    color: 'from-green-200 to-green-300',
-    distance: '850m',
-    time: '3분'
+    id: "starbucks",
+    name: "스타벅스",
+    icon: "coffee",
+    emoji: "☕",
+    color: "from-green-200 to-green-300",
+    distance: "850m",
+    time: "3분",
   },
   {
-    id: 'home',
-    name: '집',
-    icon: 'home',
-    emoji: '🏠',
-    color: 'from-pink-200 to-pink-300',
-    distance: '5.2km',
-    time: '15분'
-  }
+    id: "home",
+    name: "집",
+    icon: "home",
+    emoji: "🏠",
+    color: "from-pink-200 to-pink-300",
+    distance: "5.2km",
+    time: "15분",
+  },
 ];
 
 export function DestinationCardsUser2() {
   const getIcon = (iconName: string) => {
     switch (iconName) {
-      case 'school':
+      case "school":
         return <School className="w-6 h-6 text-white" />;
-      case 'coffee':
+      case "coffee":
         return <Coffee className="w-6 h-6 text-white" />;
-      case 'home':
+      case "home":
         return <Home className="w-6 h-6 text-white" />;
       default:
         return <MapPin className="w-6 h-6 text-white" />;
@@ -80,11 +80,17 @@ export function DestinationCardsUser2() {
               {/* 3D Icon Container */}
               <motion.div
                 animate={{ rotate: [0, 5, -5, 0] }}
-                transition={{ duration: 2, repeat: Infinity, delay: index * 0.2 }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  delay: index * 0.2,
+                }}
                 className={`w-16 h-16 bg-gradient-to-br ${destination.color} rounded-[24px] shadow-[0_6px_20px_rgba(0,0,0,0.15)] flex items-center justify-center relative`}
               >
                 <div className="absolute inset-2 bg-white/20 rounded-[16px]" />
-                <span className="text-3xl relative z-10">{destination.emoji}</span>
+                <span className="text-3xl relative z-10">
+                  {destination.emoji}
+                </span>
               </motion.div>
 
               {/* Destination Info */}

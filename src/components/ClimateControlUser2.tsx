@@ -1,10 +1,12 @@
 import React from "react";
-import { useState } from 'react';
-import { motion } from 'motion/react';
+import { useState } from "react";
+import { motion } from "framer-motion";
 
 export function ClimateControlUser2() {
   const [temperature, setTemperature] = useState(22);
-  const [fanSpeed, setFanSpeed] = useState<'weak' | 'medium' | 'strong'>('medium');
+  const [fanSpeed, setFanSpeed] = useState<"weak" | "medium" | "strong">(
+    "medium"
+  );
 
   // Calculate rotation based on temperature (16-30°C range)
   const rotation = ((temperature - 16) / (30 - 16)) * 270 - 135;
@@ -31,7 +33,7 @@ export function ClimateControlUser2() {
             strokeWidth="28"
             strokeLinecap="round"
           />
-          
+
           {/* Gradient Ring */}
           <defs>
             <linearGradient id="tempGradient" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -48,9 +50,9 @@ export function ClimateControlUser2() {
             stroke="url(#tempGradient)"
             strokeWidth="28"
             strokeLinecap="round"
-            strokeDasharray={`${(temperature - 16) / (30 - 16) * 565} 565`}
+            strokeDasharray={`${((temperature - 16) / (30 - 16)) * 565} 565`}
             style={{
-              filter: 'drop-shadow(0 4px 12px rgba(255, 105, 180, 0.3))'
+              filter: "drop-shadow(0 4px 12px rgba(255, 105, 180, 0.3))",
             }}
           />
         </svg>
@@ -65,7 +67,7 @@ export function ClimateControlUser2() {
           >
             <div className="text-5xl mb-2">{temperature}°</div>
             <div className="text-2xl">
-              {temperature < 20 ? '❄️' : temperature < 25 ? '🍃' : '☀️'}
+              {temperature < 20 ? "❄️" : temperature < 25 ? "🍃" : "☀️"}
             </div>
           </motion.div>
         </div>
@@ -74,10 +76,10 @@ export function ClimateControlUser2() {
         <motion.div
           className="absolute w-12 h-12 bg-gradient-to-br from-pink-300 to-pink-400 rounded-full shadow-[0_6px_20px_rgba(236,72,153,0.4)] cursor-pointer"
           style={{
-            top: '50%',
-            left: '50%',
-            marginTop: '-24px',
-            marginLeft: '-24px',
+            top: "50%",
+            left: "50%",
+            marginTop: "-24px",
+            marginLeft: "-24px",
           }}
           animate={{
             rotate: rotation,
@@ -105,7 +107,7 @@ export function ClimateControlUser2() {
         >
           <span className="text-2xl">❄️</span>
         </motion.button>
-        
+
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
@@ -120,7 +122,7 @@ export function ClimateControlUser2() {
       <div className="space-y-3">
         <div className="text-center text-gray-600 mb-4">바람 세기 🍃</div>
         <div className="flex justify-center gap-3">
-          {(['weak', 'medium', 'strong'] as const).map((speed) => (
+          {(["weak", "medium", "strong"] as const).map((speed) => (
             <motion.button
               key={speed}
               whileHover={{ scale: 1.05 }}
@@ -128,16 +130,19 @@ export function ClimateControlUser2() {
               onClick={() => setFanSpeed(speed)}
               className={`px-6 py-3 rounded-full transition-all ${
                 fanSpeed === speed
-                  ? 'bg-gradient-to-br from-mint-200 to-mint-300 shadow-[0_6px_20px_rgba(72,187,120,0.4)] text-white'
-                  : 'bg-gray-100 text-gray-600'
+                  ? "bg-gradient-to-br from-mint-200 to-mint-300 shadow-[0_6px_20px_rgba(72,187,120,0.4)] text-white"
+                  : "bg-gray-100 text-gray-600"
               }`}
               style={{
-                background: fanSpeed === speed ? 'linear-gradient(to bottom right, #C8E6C9, #A5D6A7)' : undefined
+                background:
+                  fanSpeed === speed
+                    ? "linear-gradient(to bottom right, #C8E6C9, #A5D6A7)"
+                    : undefined,
               }}
             >
-              {speed === 'weak' && '약하게'}
-              {speed === 'medium' && '보통'}
-              {speed === 'strong' && '세게'}
+              {speed === "weak" && "약하게"}
+              {speed === "medium" && "보통"}
+              {speed === "strong" && "세게"}
             </motion.button>
           ))}
         </div>
