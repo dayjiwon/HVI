@@ -3,12 +3,37 @@ import { motion } from "framer-motion";
 import { School, Coffee, Home, MapPin } from "lucide-react";
 
 const destinations = [
-  { icon: School, label: "인하대학교", color: "#2D9CFF" },
-  { icon: Coffee, label: "스타벅스 송도점", color: "#00B5F5" },
-  { icon: Home, label: "자택", color: "#2D9CFF" },
+  {
+    icon: School,
+    label: "인하대학교",
+    color: "#2D9CFF",
+    lat: 37.450316,
+    lon: 126.653259,
+  },
+  {
+    icon: Coffee,
+    label: "스타벅스 송도점",
+    color: "#00B5F5",
+    lat: 37.38799,
+    lon: 126.662356,
+  },
+  {
+    icon: Home,
+    label: "자택",
+    color: "#2D9CFF",
+    lat: 37.42,
+    lon: 126.68,
+  },
 ];
 
-export default function DestinationCards() {
+export default function DestinationCards({ onSelectDestination }) {
+  const openTmap = (label: string, lat: number, lon: number) => {
+    const url = `tmap://route?goalx=${lon}&goaly=${lat}&goalname=${encodeURIComponent(
+      label
+    )}`;
+    window.location.href = url;
+  };
+
   return (
     <div className="flex flex-col items-center justify-center h-full gap-4 px-6">
       <div className="text-sm text-gray-600 mb-2">빠른 목적지</div>
@@ -19,6 +44,7 @@ export default function DestinationCards() {
           return (
             <motion.button
               key={dest.label}
+              onClick={() => onSelectDestination(dest)}
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: index * 0.1 }}
