@@ -4,6 +4,7 @@ import React from "react";
 
 import MainDad from "./pages/home/MainDad";
 import MainMom from "./pages/home/MainMom";
+import { VoiceCommandProvider } from "./context/VoiceCommandContext";
 
 export default function App() {
   const [phase, setPhase] = useState<"face" | "pin" | "main">("face");
@@ -174,9 +175,12 @@ export default function App() {
 
   // 3. 메인 UI → 사용자별 분기
   if (phase === "main") {
-    if (user === "user1") return <MainDad />;
-    if (user === "user2") return <MainMom />;
+    return (
+      <VoiceCommandProvider>
+        {user === "user1" && <MainDad />}
+        {user === "user2" && <MainMom />}
+      </VoiceCommandProvider>
+    );
   }
-
   return null;
 }

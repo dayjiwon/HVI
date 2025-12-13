@@ -1,14 +1,38 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Wind, ThermometerSun } from "lucide-react";
+import { useVoiceCommand } from "../context/VoiceCommandContext";
 
 export default function ClimateControl() {
   const [temperature, setTemperature] = useState(22);
   const [airflow, setAirflow] = useState<"약" | "중" | "강">("중");
+  const { command } = useVoiceCommand();
 
   const temperaturePercentage = ((temperature - 16) / (30 - 16)) * 100;
 
+  useEffect(() => {
+    if (!command) return;
+    if (command.domain !== "climate") return;
+  
+    console.log("🌡 climate command:", command);
+  
+    // 1️⃣ 절대 온도 설정
+    if (typeof command.target_temperature === "number") {
+      setTemperature(
+        Math.min(30, Math.max(16, command.target_temperature))
+      );
+      return;
+    }
+  
+    // 2️⃣ 상대 온도 조절
+    if (command.action === "temperature" && typeof command.delta === "number") {
+      setTemperature((t) =>
+        Math.min(30, Math.max(16, t + command.delta))
+      );
+    }
+  }, [command]);
+  
   return (
     <div className="flex flex-col items-center justify-center h-full gap-8 px-8">
       {/* Temperature Dial */}
@@ -118,28 +142,6 @@ export default function ClimateControl() {
             </button>
           ))}
         </div>
-
-        {/* Wave Animation */}
-        {airflow && (
-          <div className="mt-6 flex items-center justify-center gap-1">
-            {[...Array(airflow === "약" ? 2 : airflow === "중" ? 3 : 5)].map(
-              (_, i) => (
-                <motion.div
-                  key={i}
-                  className="w-1 bg-[#2D9CFF] rounded-full"
-                  initial={{ height: 4 }}
-                  animate={{ height: [4, 20, 4] }}
-                  transition={{
-                    duration: 1,
-                    repeat: Infinity,
-                    delay: i * 0.1,
-                    ease: "easeInOut",
-                  }}
-                />
-              )
-            )}
-          </div>
-        )}
       </div>
 
       {/* Status Info */}
