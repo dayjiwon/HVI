@@ -190,7 +190,7 @@ export default function App() {
   // ★ ScaleWrapper 적용: designWidth/Height에 원래 디자인했던 해상도를 입력하세요.
   // 예: PC 전체화면 기준이었다면 1920 x 1080
   return (
-    <ScaleWrapper designWidth={1920} designHeight={1080}>
+    <ScaleWrapper designWidth={800} designHeight={480}>
       {renderContent()}
     </ScaleWrapper>
   );
