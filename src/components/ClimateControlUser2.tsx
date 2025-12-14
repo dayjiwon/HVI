@@ -2,19 +2,14 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useVoiceCommand } from "../context/VoiceCommandContext";
 
-export function ClimateControlUser2() {
+export default function ClimateControlUser2() {
   const [temperature, setTemperature] = useState(22);
-  const [fanSpeed, setFanSpeed] = useState<"weak" | "medium" | "strong">(
-    "medium"
-  );
+  const [fanSpeed, setFanSpeed] = useState<"weak" | "medium" | "strong">("medium");
 
-  // 16 ~ 30°C → -135° ~ +135° (UI 계산 로직 유지)
-  const rotation = ((temperature - 16) / (30 - 16)) * 270 - 135;
-  
   const { command } = useVoiceCommand();
 
   /* =========================================
-     🧩 Logic Integration (from ClimateControl)
+     🧩 Logic Integration
   ========================================= */
   useEffect(() => {
     if (!command) return;
@@ -22,8 +17,7 @@ export function ClimateControlUser2() {
   
     console.log("🌡 climate command (User2):", command);
   
-    // 1️⃣ 절대 온도 설정 (예: "온도 24도로 해줘")
-    // ClimateControl.tsx의 로직을 그대로 가져옴
+    // 1️⃣ 절대 온도 설정
     if (typeof command.target_temperature === "number") {
       setTemperature(
         Math.min(30, Math.max(16, command.target_temperature))
@@ -31,132 +25,133 @@ export function ClimateControlUser2() {
       return;
     }
   
-    // 2️⃣ 상대 온도 조절 (예: "온도 올려줘", "1도 내려줘")
+    // 2️⃣ 상대 온도 조절
     if (command.action === "temperature" && typeof command.delta === "number") {
       setTemperature(t =>
         Math.min(30, Math.max(16, t + command.delta))
       );
     }
-    
-    // (참고: 풍량 조절 명령이 있다면 여기에 추가 가능)
   }, [command]);
 
   /* =========================================
-     🖼 UI Implementation (Preserved EXACTLY)
+     🖼 UI Implementation (Optimized for 800x480)
   ========================================= */
   return (
-    <div className="bg-white/60 backdrop-blur-sm rounded-[40px] p-8 shadow-[0_8px_32px_rgba(0,0,0,0.08)]">
-      {/* Header */}
-      <div className="text-center mb-24">
-        <h2 className="text-pink-400 mb-2">온도 조절 🌈</h2>
-        <p className="text-gray-500">완벽한 온도를 찾아봐!</p>
+    // 부모 컨테이너 크기에 맞춰 꽉 채우고 내부 요소 균등 배치 (justify-evenly)
+    <div className="flex flex-col items-center justify-evenly h-full w-full py-1 px-2 bg-white/40 backdrop-blur-sm rounded-2xl shadow-sm">
+      
+      {/* 1. Header (Title) - 크기 축소 */}
+      <div className="text-center shrink-0">
+        <h2 className="text-xs font-bold text-pink-400 mb-0.5">온도 조절 🌈</h2>
+        <p className="text-[9px] text-gray-500">완벽한 온도를 찾아봐!</p>
       </div>
 
-      {/* Donut Temperature Control */}
-      <div className="relative flex items-center justify-center mb-8">
-        {/* Donut Ring */}
-        <svg width="240" height="240" className="transform -rotate-90">
-          <circle
-            cx="120"
-            cy="120"
-            r="90"
-            fill="none"
-            stroke="#f0f0f0"
-            strokeWidth="28"
-            strokeLinecap="round"
-          />
+      {/* 2. Donut Temperature Control - 크기 대폭 축소 */}
+      <div className="relative flex items-center justify-center shrink-0">
+        
+        {/* SVG Ring: 240px -> 112px (w-28) 수준으로 축소 */}
+        <div className="relative w-28 h-28">
+            <svg width="100%" height="100%" viewBox="0 0 240 240" className="transform -rotate-90">
+            {/* Background Circle */}
+            <circle
+                cx="120"
+                cy="120"
+                r="90"
+                fill="none"
+                stroke="#f0f0f0"
+                strokeWidth="28"
+                strokeLinecap="round"
+            />
 
-          <defs>
-            <linearGradient id="tempGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#B3E5FC" />
-              <stop offset="50%" stopColor="#FFF9C4" />
-              <stop offset="100%" stopColor="#FFD1DC" />
-            </linearGradient>
-          </defs>
+            <defs>
+                <linearGradient id="tempGradientUser2" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#B3E5FC" />
+                <stop offset="50%" stopColor="#FFF9C4" />
+                <stop offset="100%" stopColor="#FFD1DC" />
+                </linearGradient>
+            </defs>
 
-          <circle
-            cx="120"
-            cy="120"
-            r="90"
-            fill="none"
-            stroke="url(#tempGradient)"
-            strokeWidth="28"
-            strokeLinecap="round"
-            strokeDasharray={`${((temperature - 16) / (30 - 16)) * 565} 565`}
-            style={{
-              filter: "drop-shadow(0 4px 12px rgba(255, 105, 180, 0.3))",
-            }}
-          />
-        </svg>
+            {/* Value Circle */}
+            <circle
+                cx="120"
+                cy="120"
+                r="90"
+                fill="none"
+                stroke="url(#tempGradientUser2)"
+                strokeWidth="28"
+                strokeLinecap="round"
+                strokeDasharray={`${((temperature - 16) / (30 - 16)) * 565} 565`}
+                style={{
+                filter: "drop-shadow(0 2px 6px rgba(255, 105, 180, 0.3))",
+                }}
+            />
+            </svg>
 
-        {/* Center Content */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <motion.div
-            key={temperature}
-            initial={{ scale: 1.2, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            className="text-center"
-          >
-            <div className="text-5xl mb-2">{temperature}°</div>
-            <div className="text-2xl">
-              {temperature < 20 ? "❄️" : temperature < 25 ? "🍃" : "☀️"}
+            {/* Center Content (Temperature Display) */}
+            <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+            <motion.div
+                key={temperature}
+                initial={{ scale: 1.2, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                className="text-center"
+            >
+                {/* 폰트 크기: text-5xl -> text-2xl */}
+                <div className="text-2xl font-bold text-gray-700 mb-0.5">{temperature}°</div>
+                <div className="text-base">
+                {temperature < 20 ? "❄️" : temperature < 25 ? "🍃" : "☀️"}
+                </div>
+            </motion.div>
             </div>
-          </motion.div>
+
+            {/* ☀️ Temperature Up Button (Top) */}
+            <motion.button
+            onClick={() => setTemperature(Math.min(30, temperature + 0.5))}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2
+                        w-8 h-8 rounded-full
+                        bg-gradient-to-br from-pink-200 to-pink-300
+                        shadow-md flex items-center justify-center cursor-pointer z-10"
+            // SVG 좌표 기준 (120, 120)에서 r=90, stroke=28 고려하여 위치 조정
+            // 화면상 위치를 CSS top/left로 미세조정: top -5px 정도
+            style={{ top: "10px" }} 
+            aria-label="온도 올리기"
+            >
+            <span className="text-xs">☀️</span>
+            </motion.button>
+
+            {/* ❄️ Temperature Down Button (Bottom) */}
+            <motion.button
+            onClick={() => setTemperature(Math.max(16, temperature - 0.5))}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2
+                        w-8 h-8 rounded-full
+                        bg-gradient-to-br from-blue-200 to-blue-300
+                        shadow-md flex items-center justify-center cursor-pointer z-10"
+            style={{ top: "calc(100% - 10px)" }}
+            aria-label="온도 내리기"
+            >
+            <span className="text-xs">❄️</span>
+            </motion.button>
         </div>
-
-        {/* ☀️ Temperature Up (12시) */}
-        <motion.button
-          onClick={() => setTemperature(Math.min(30, temperature + 0.5))}
-          className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2
-                     w-14 h-14 rounded-full
-                     bg-gradient-to-br from-pink-200 to-pink-300
-                     shadow-[0_4px_16px_rgba(236,72,153,0.3)]"
-          style={{ top: "calc(50% - 90px)" }}
-          aria-label="온도 올리기"
-        >
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="w-full h-full flex items-center justify-center"
-          >
-            <span className="text-2xl">☀️</span>
-          </motion.div>
-        </motion.button>
-
-        {/* ❄️ Temperature Down (6시) */}
-        <motion.button
-          onClick={() => setTemperature(Math.max(16, temperature - 0.5))}
-          className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2
-                     w-14 h-14 rounded-full
-                     bg-gradient-to-br from-blue-200 to-blue-300
-                     shadow-[0_4px_16px_rgba(59,130,246,0.3)]"
-          style={{ top: "calc(50% + 90px)" }}
-          aria-label="온도 내리기"
-        >
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="w-full h-full flex items-center justify-center"
-          >
-            <span className="text-2xl">❄️</span>
-          </motion.div>
-        </motion.button>
       </div>
 
-      {/* Fan Speed Controls */}
-      <div className="space-y-3">
-        <div className="text-center text-gray-600 mb-4">바람 세기 🍃</div>
-        <div className="flex justify-center gap-3">
+      {/* 3. Fan Speed Controls - 크기 및 패딩 축소 */}
+      <div className="w-full shrink-0 mt-1">
+        <div className="text-center text-[10px] text-gray-500 mb-1">바람 세기 🍃</div>
+        <div className="flex justify-center gap-1.5">
           {(["weak", "medium", "strong"] as const).map((speed) => (
             <motion.button
               key={speed}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setFanSpeed(speed)}
-              className={`px-6 py-3 rounded-full transition-all ${
+              // 버튼 크기: px-6 py-3 -> px-2.5 py-1
+              className={`px-2.5 py-1 text-[10px] rounded-full transition-all ${
                 fanSpeed === speed
-                  ? "text-white shadow-[0_6px_20px_rgba(72,187,120,0.4)]"
-                  : "bg-gray-100 text-gray-600"
+                  ? "text-white shadow-sm font-bold"
+                  : "bg-gray-100 text-gray-500"
               }`}
               style={{
                 background:

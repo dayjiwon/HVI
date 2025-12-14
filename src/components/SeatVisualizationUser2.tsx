@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ArrowUp, ArrowDown, Smile } from "lucide-react";
-import { useVoiceCommand } from "../context/VoiceCommandContext"; // 1. Context import 추가
+import { useVoiceCommand } from "../context/VoiceCommandContext";
 
 type ControlTarget = "backrest" | "height" | "position";
 
-export function SeatVisualizationUser2() {
-  // 2. 음성 명령 Hook 사용
+export default function SeatVisualizationUser2() {
   const { command } = useVoiceCommand();
   
   const [target, setTarget] = useState<ControlTarget>("backrest");
@@ -15,7 +14,7 @@ export function SeatVisualizationUser2() {
   const [seatPosition, setSeatPosition] = useState(1.5);  // cm
 
   /* ============================
-     🎙️ Logic Integration (From SeatVisualization)
+     🎙️ Logic Integration
   ============================ */
   useEffect(() => {
     if (!command) return;
@@ -57,7 +56,7 @@ export function SeatVisualizationUser2() {
   }, [command]);
 
   /* ============================
-     🔘 Manual Controls (Logic Updated for safety)
+     🔘 Manual Controls
   ============================ */
   const handleIncrease = () => {
     if (target === "backrest") setBackrestAngle(v => Math.min(45, v + 5));
@@ -72,43 +71,42 @@ export function SeatVisualizationUser2() {
   };
 
   const centerLabel = {
-    backrest: "등받이 각도",
-    height: "시트 높이",
-    position: "전후 위치",
+    backrest: "등받이",
+    height: "높이",
+    position: "위치",
   }[target];
 
   const IndicatorDot = ({ delay = 0 }) => (
     <motion.div
-      className="w-7 h-7 rounded-full bg-purple-300/40 flex items-center justify-center"
+      className="w-5 h-5 rounded-full bg-purple-300/40 flex items-center justify-center shrink-0"
       animate={{ scale: [1, 1.2, 1] }}
       transition={{ duration: 2, repeat: Infinity, delay }}
     >
-      <div className="w-3 h-3 rounded-full bg-purple-500" />
+      <div className="w-2 h-2 rounded-full bg-purple-500" />
     </motion.div>
   );
 
-  /* ============================
-     🖼️ UI Implementation (Preserved EXACTLY)
-  ============================ */
   return (
-    <div className="bg-white/60 backdrop-blur-sm rounded-[40px] p-8 shadow-[0_8px_32px_rgba(0,0,0,0.08)]">
+    // 전체 컨테이너: justify-evenly로 상하 여백 자동 분배
+    <div className="flex flex-col items-center justify-evenly h-full w-full py-1 bg-white/40 backdrop-blur-sm rounded-2xl shadow-sm">
+      
       {/* Header */}
-      <div className="flex items-center gap-3 mb-6">
+      <div className="flex items-center gap-1.5 mb-1 shrink-0">
         <motion.div
           animate={{ rotate: [0, 10, -10, 0] }}
           transition={{ duration: 2, repeat: Infinity, repeatDelay: 1 }}
         >
-          <Smile className="w-8 h-8 text-purple-400" />
+          <Smile className="w-4 h-4 text-purple-400" />
         </motion.div>
-        <h2 className="text-purple-400 font-semibold">
+        <h2 className="text-[11px] text-purple-400 font-semibold">
           AI가 의자를 맞춰줄게 ✨
         </h2>
       </div>
 
-      {/* Seat + Indicators */}
-      <div className="relative flex items-center justify-center my-10">
-        {/* Seat SVG */}
-        <svg viewBox="0 0 200 280" className="w-56 drop-shadow-2xl">
+      {/* Seat SVG & Indicators */}
+      {/* 크기 축소: w-28 h-36 (112px x 144px) */}
+      <div className="relative w-28 h-36">
+        <svg viewBox="0 0 200 280" className="w-full h-full drop-shadow-lg">
           <defs>
             <linearGradient id="seatUser2" x1="0%" y1="0%" x2="0%" y2="100%">
               <stop offset="0%" stopColor="#F3E8FF" />
@@ -122,7 +120,7 @@ export function SeatVisualizationUser2() {
                Q 150 35 140 40 Z"
             fill="url(#seatUser2)"
             stroke="#C4B5FD"
-            strokeWidth="1"
+            strokeWidth="2"
           />
           <ellipse
             cx="100"
@@ -131,7 +129,7 @@ export function SeatVisualizationUser2() {
             ry="15"
             fill="url(#seatUser2)"
             stroke="#C4B5FD"
-            strokeWidth="1"
+            strokeWidth="2"
           />
           <path
             d="M 40 165 Q 40 170 45 175 
@@ -142,60 +140,66 @@ export function SeatVisualizationUser2() {
                L 50 145 Q 40 145 40 155 Z"
             fill="url(#seatUser2)"
             stroke="#C4B5FD"
-            strokeWidth="1"
+            strokeWidth="2"
           />
-          <path d="M 35 145 Q 30 145 30 150 L 30 180 Q 30 185 35 185 L 45 185 Q 50 185 50 180 L 50 150 Q 50 145 45 145 Z" fill="#9e65b8" stroke="#6e2d8c" strokeWidth="1" />
-          <path d="M 155 145 Q 150 145 150 150 L 150 180 Q 150 185 155 185 L 165 185 Q 170 185 170 180 L 170 150 Q 170 145 165 145 Z" fill="#9e65b8" stroke="#6e2d8c" strokeWidth="1" />
+          <path d="M 35 145 Q 30 145 30 150 L 30 180 Q 30 185 35 185 L 45 185 Q 50 185 50 180 L 50 150 Q 50 145 45 145 Z" fill="#9e65b8" stroke="#6e2d8c" strokeWidth="2" />
+          <path d="M 155 145 Q 150 145 150 150 L 150 180 Q 150 185 155 185 L 165 185 Q 170 185 170 180 L 170 150 Q 170 145 165 145 Z" fill="#9e65b8" stroke="#6e2d8c" strokeWidth="2" />
         </svg>
 
-        {/* 등받이 각도 */}
+        {/* 등받이 각도 (Left) */}
         <motion.div
           onClick={() => setTarget("backrest")}
-          className="absolute left-20 top-20 flex items-center gap-2 cursor-pointer"
+          // 위치 조정 (-left-16) 및 크기 축소
+          className="absolute -left-16 top-6 flex items-center gap-1 cursor-pointer z-10"
           whileHover={{ scale: 1.05 }}
         >
-          <div className="bg-white/90 px-3 py-1.5 rounded-lg shadow-md border border-purple-300">
-            <div className="text-xs text-gray-500">등받이 각도</div>
-            <div className="text-sm text-purple-500">{backrestAngle}°</div>
+          <div className="bg-white/95 px-2 py-1 rounded-md shadow-sm border border-purple-300 text-right min-w-[48px]">
+            <div className="text-[9px] text-gray-400">등받이</div>
+            <div className="text-[11px] font-bold text-purple-500">{backrestAngle}°</div>
           </div>
           <IndicatorDot />
         </motion.div>
 
-        {/* 시트 높이 */}
+        {/* 시트 높이 (Right) */}
         <motion.div
           onClick={() => setTarget("height")}
-          className="absolute right-20 top-50 flex items-center gap-2 cursor-pointer"
+          className="absolute -right-16 top-14 flex items-center gap-1 cursor-pointer z-10"
           whileHover={{ scale: 1.05 }}
         >
           <IndicatorDot delay={0.5} />
-          <div className="bg-white/90 px-3 py-1.5 rounded-lg shadow-md border border-purple-300">
-            <div className="text-xs text-gray-500">시트 높이</div>
-            <div className="text-sm text-purple-500">{seatHeight > 0 ? `+${seatHeight}` : seatHeight}</div>
+          <div className="bg-white/95 px-2 py-1 rounded-md shadow-sm border border-purple-300 text-left min-w-[48px]">
+            <div className="text-[9px] text-gray-400">높이</div>
+            <div className="text-[11px] font-bold text-purple-500">
+              {seatHeight > 0 ? `+${seatHeight}` : seatHeight}
+            </div>
           </div>
         </motion.div>
 
-        {/* 전후 위치 */}
+        {/* 전후 위치 (Bottom) */}
         <motion.div
           onClick={() => setTarget("position")}
-          className="absolute left-2/5 -translate-x-1/2 bottom-0 flex flex-col items-center gap-2 cursor-pointer"
+          className="absolute left-1/2 -translate-x-1/2 -bottom-6 flex flex-col items-center gap-0.5 cursor-pointer z-10"
           whileHover={{ scale: 1.05 }}
         >
           <IndicatorDot delay={1} />
-          <div className="bg-white/90 px-3 py-1.5 rounded-lg shadow-md border border-purple-300">
-            <div className="text-xs text-gray-500">전후 위치</div>
-            <div className="text-sm text-purple-500">{seatPosition > 0 ? `+${seatPosition}` : seatPosition} cm</div>
+          <div className="bg-white/95 px-2 py-0.5 rounded-md shadow-sm border border-purple-300 text-center min-w-[48px]">
+            <div className="text-[9px] text-gray-400">위치</div>
+            <div className="text-[11px] font-bold text-purple-500">
+              {seatPosition > 0 ? `+${seatPosition}` : seatPosition}
+            </div>
           </div>
         </motion.div>
       </div>
 
       {/* Controls */}
-      <div className="flex justify-center gap-4 mt-8">
+      <div className="flex justify-center gap-2 mt-4 shrink-0">
         <motion.button
           onClick={handleIncrease}
           whileTap={{ scale: 0.9 }}
-          className="w-14 h-14 bg-purple-300 rounded-full flex items-center justify-center shadow-lg"
+          // 버튼 크기: w-14 -> w-9
+          className="w-9 h-9 bg-purple-300 rounded-full flex items-center justify-center shadow-md hover:bg-purple-400"
         >
-          <ArrowUp className="text-white" />
+          <ArrowUp className="w-5 h-5 text-white" />
         </motion.button>
 
         <motion.div
@@ -203,7 +207,8 @@ export function SeatVisualizationUser2() {
           initial={{ scale: 0.85, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 0.25 }}
-          className="w-28 h-14 bg-purple-400 rounded-full flex items-center justify-center shadow-lg text-white font-semibold text-sm"
+          // 라벨 박스 크기: w-28 -> w-20, h-14 -> h-9
+          className="w-20 h-9 bg-purple-400 rounded-full flex items-center justify-center shadow-lg text-white font-bold text-xs"
         >
           {centerLabel}
         </motion.div>
@@ -211,15 +216,15 @@ export function SeatVisualizationUser2() {
         <motion.button
           onClick={handleDecrease}
           whileTap={{ scale: 0.9 }}
-          className="w-14 h-14 bg-purple-300 rounded-full flex items-center justify-center shadow-lg"
+          className="w-9 h-9 bg-purple-300 rounded-full flex items-center justify-center shadow-md hover:bg-purple-400"
         >
-          <ArrowDown className="text-white" />
+          <ArrowDown className="w-5 h-5 text-white" />
         </motion.button>
       </div>
 
       {/* Status */}
-      <div className="text-center mt-6">
-        <span className="inline-block bg-purple-100 px-6 py-2 rounded-full text-purple-600">
+      <div className="text-center mt-2 shrink-0">
+        <span className="inline-block bg-purple-100 px-3 py-1 rounded-full text-[9px] text-purple-600 font-bold">
           {centerLabel} 조절 중 💜
         </span>
       </div>

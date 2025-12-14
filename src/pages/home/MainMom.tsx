@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Sparkles } from "lucide-react";
 
-import { SeatVisualizationUser2 } from "../../components/SeatVisualizationUser2";
-import { ClimateControlUser2 } from "../../components/ClimateControlUser2";
+import SeatVisualizationUser2 from "../../components/SeatVisualizationUser2";
+import ClimateControlUser2 from "../../components/ClimateControlUser2";
 import { DestinationCardsUser2 } from "../../components/DestinationCardsUser2";
 import { VoiceAssistant } from "../../components/VoiceAssistant";
 import MapView from "../map/MapView";
@@ -77,7 +77,6 @@ export default function MainMom() {
     console.log("🎵 Play music:", music.title, "-", music.artist);
     // 실제 재생은 DestinationCards 내부 iframe에서 처리
   };
-  
 
   // 목적지 선택 → 지도
   if (selectedDest) {
@@ -92,52 +91,69 @@ export default function MainMom() {
   // 로딩 중
   if (loading) {
     return (
-      <>
-        {/* AI Header - Centered & Scaled */}
+      <motion.div
+        className="fixed inset-0 z-50 flex items-center justify-center"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.4 }}
+      >
         <motion.div
-          className="fixed inset-0 z-50 flex items-center justify-center"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.4 }}
+          className="flex items-center gap-4 px-8 py-4 bg-white/80 backdrop-blur-md rounded-full shadow-2xl border border-[#2D9CFF]/30"
+          initial={{ scale: 0.9, y: 20 }}
+          animate={{ scale: 1.2, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
         >
           <motion.div
-            className="flex items-center gap-4 px-8 py-4 bg-white/80 backdrop-blur-md rounded-full shadow-2xl border border-[#2D9CFF]/30"
-            initial={{ scale: 0.9, y: 20 }}
-            animate={{ scale: 1.2, y: 0 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
+            animate={{ rotate: [0, 360] }}
+            transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
           >
-            <motion.div
-              animate={{ rotate: [0, 360] }}
-              transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-            >
-              <Sparkles className="w-8 h-8 text-[#2D9CFF]" />
-            </motion.div>
-  
-            <span className="text-lg font-medium text-gray-800">
-              AI 기반 좌석, 목적지 설정중…
-            </span>
+            <Sparkles className="w-8 h-8 text-[#2D9CFF]" />
           </motion.div>
-        </motion.div>
-      </>
-    );
-  }  
 
-  // 🔵 기존 UI 구조 그대로
+          <span className="text-lg font-medium text-gray-800">
+            AI 기반 좌석, 목적지 설정중…
+          </span>
+        </motion.div>
+      </motion.div>
+    );
+  }
+
+  // 🔵 800x480 최적화 UI 적용
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-blue-50 to-purple-50 p-6 flex flex-col gap-6">
+    // min-h-screen 제거 -> w-full h-full로 변경하여 고정 크기 유지
+    <div className="w-full h-full bg-gradient-to-br from-pink-50 via-blue-50 to-purple-50 flex flex-col overflow-hidden">
+      
       {/* Main Dashboard Grid */}
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <SeatVisualizationUser2 />
-        <ClimateControlUser2 />
-        <DestinationCardsUser2
-          destinations={destinations}
-          musics={musics}
-          onSelectDestination={setSelectedDest}
-          onPlayMusic={handlePlayMusic}
-        />
+      {/* flex-1, min-h-0 추가하여 남은 공간만 차지하도록 설정 */}
+      {/* padding과 gap을 6 -> 3으로 축소 */}
+      <div className="flex-1 grid grid-cols-3 gap-3 p-3 min-h-0">
+        
+        {/* User2 컴포넌트들은 이미 최적화했으므로 바로 배치 */}
+        <div className="h-full overflow-hidden">
+             <SeatVisualizationUser2 />
+        </div>
+        
+        <div className="h-full overflow-hidden">
+             <ClimateControlUser2 />
+        </div>
+        
+        <div className="h-full overflow-hidden">
+             <DestinationCardsUser2
+                destinations={destinations}
+                musics={musics}
+                onSelectDestination={setSelectedDest}
+                onPlayMusic={handlePlayMusic}
+             />
+        </div>
       </div>
 
-      <VoiceAssistant />
+      {/* Voice Assistant Area */}
+      {/* 높이를 80px(h-20)로 고정하여 상단 영역 침범 방지 */}
+      <div className="h-20 px-3 pb-3 shrink-0">
+        <div className="h-full flex items-center justify-center bg-white/60 backdrop-blur-md rounded-2xl shadow-sm">
+            <VoiceAssistant />
+        </div>
+      </div>
     </div>
   );
 }

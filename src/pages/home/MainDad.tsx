@@ -105,42 +105,47 @@ export default function MainDad() {
         animate={{ opacity: 1 }}
       >
         <motion.div
-          className="flex items-center gap-4 px-8 py-4 bg-white/80 backdrop-blur-md rounded-full shadow-2xl border border-[#2D9CFF]/30"
+          className="flex items-center gap-3 px-6 py-3 bg-white/80 backdrop-blur-md rounded-full shadow-2xl border border-[#2D9CFF]/30"
           initial={{ scale: 0.9 }}
-          animate={{ scale: 1.2 }}
+          animate={{ scale: 1 }}
         >
           <motion.div
             animate={{ rotate: [0, 360] }}
             transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
           >
-            <Sparkles className="w-8 h-8 text-[#2D9CFF]" />
+            <Sparkles className="w-6 h-6 text-[#2D9CFF]" />
           </motion.div>
 
-          <span className="text-lg font-medium text-gray-800">
-            AI 기반 좌석 · 목적지 · 음악 설정중…
+          <span className="text-base font-medium text-gray-800">
+            AI 설정 적용 중...
           </span>
         </motion.div>
       </motion.div>
     );
   }
 
-  /* ================= 메인 UI ================= */
+  /* ================= 메인 UI (800x480 Optimized) ================= */
 
   return (
-    <div className="w-full h-screen bg-gradient-to-br from-[#F7F8FA] to-[#E8EBEF] flex flex-col overflow-hidden">
-      <div className="flex-1 grid grid-cols-3 gap-6 p-6">
+    // 전체 컨테이너: ScaleWrapper 내부에서 꽉 차게 설정
+    <div className="w-full h-full bg-gradient-to-br from-[#F7F8FA] to-[#E8EBEF] flex flex-col overflow-hidden">
+      
+      {/* 상단 3단 그리드 영역 (Seat, Climate, Dest/Music) */}
+      {/* gap과 padding을 줄여서 공간 확보 (p-6 -> p-3, gap-6 -> gap-3) */}
+      <div className="flex-1 grid grid-cols-3 gap-3 p-3 min-h-0">
+        
         {/* Seat */}
-        <div className="relative bg-white/60 backdrop-blur-xl rounded-3xl shadow-xl p-6">
+        <div className="relative bg-white/60 backdrop-blur-xl rounded-2xl shadow-lg p-4 flex flex-col justify-center">
           <SeatVisualization />
         </div>
 
         {/* Climate */}
-        <div className="relative bg-white/60 backdrop-blur-xl rounded-3xl shadow-xl p-6">
+        <div className="relative bg-white/60 backdrop-blur-xl rounded-2xl shadow-lg p-4 flex flex-col justify-center">
           <ClimateControl />
         </div>
 
         {/* Destination + Music */}
-        <div className="relative bg-white/60 backdrop-blur-xl rounded-3xl shadow-xl p-6 overflow-hidden">
+        <div className="relative bg-white/60 backdrop-blur-xl rounded-2xl shadow-lg p-4 overflow-hidden flex flex-col">
           <DestinationCards
             destinations={destinations}
             musics={musics}
@@ -150,9 +155,10 @@ export default function MainDad() {
         </div>
       </div>
 
-      {/* Voice */}
-      <div className="h-32 px-6 pb-6">
-        <div className="relative h-full bg-white/70 backdrop-blur-xl rounded-3xl shadow-lg">
+      {/* Voice Interaction Bar (Bottom) */}
+      {/* 높이를 h-32(128px)에서 h-20(80px)으로 줄임 */}
+      <div className="h-20 px-3 pb-3 shrink-0">
+        <div className="relative h-full bg-white/70 backdrop-blur-xl rounded-2xl shadow-lg flex items-center justify-center">
           <VoiceInteraction />
         </div>
       </div>

@@ -34,16 +34,21 @@ export default function ClimateControl() {
   }, [command]);
   
   return (
-    <div className="flex flex-col items-center justify-center h-full gap-8 px-8">
-      {/* Temperature Dial */}
-      <div className="relative">
-        <div className="text-center mb-4">
-          <ThermometerSun className="w-6 h-6 text-[#2D9CFF] mx-auto mb-2" />
-          <div className="text-xs text-gray-500">실내 온도</div>
-        </div>
+    // ★ 수정됨: h-full -> h-[80%] (부모 높이의 4/5)
+    // gap-2 -> gap-1 (높이가 줄어든 만큼 간격도 더 좁게)
+    <div className="flex flex-col items-center justify-center h-[80%] gap-1 px-2">
+      
+      {/* 1. 상단 아이콘 및 라벨 */}
+      <div className="text-center">
+        <ThermometerSun className="w-5 h-5 text-[#2D9CFF] mx-auto mb-1" />
+        <div className="text-[10px] text-gray-500">실내 온도</div>
+      </div>
 
-        <div className="relative w-48 h-48">
-          {/* Background Circle */}
+      {/* 2. 온도 조절 다이얼 */}
+      <div className="relative">
+        <div className="relative w-32 h-32">
+          
+          {/* SVG Background Circle */}
           <svg className="absolute inset-0 -rotate-90" viewBox="0 0 100 100">
             <circle
               cx="50"
@@ -53,7 +58,6 @@ export default function ClimateControl() {
               stroke="#E8EBEF"
               strokeWidth="8"
             />
-            {/* Gradient Ring */}
             <defs>
               <linearGradient
                 id="tempGradient"
@@ -86,10 +90,10 @@ export default function ClimateControl() {
             />
           </svg>
 
-          {/* Temperature Display */}
+          {/* 중앙 온도 텍스트 Display */}
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             <motion.div
-              className="text-5xl text-gray-800"
+              className="text-3xl font-bold text-gray-800"
               key={temperature}
               initial={{ scale: 1.2, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
@@ -97,44 +101,44 @@ export default function ClimateControl() {
             >
               {temperature}°
             </motion.div>
-            <div className="text-sm text-gray-500 mt-1">Celsius</div>
+            <div className="text-[10px] text-gray-500 mt-0.5">Celsius</div>
           </div>
 
-          {/* Temperature Controls */}
+          {/* Plus / Minus Buttons */}
           <button
             onClick={() => setTemperature(Math.min(30, temperature + 0.5))}
-            className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-2 w-10 h-10 rounded-full bg-white shadow-lg border border-gray-200 hover:border-[#2D9CFF] hover:bg-[#2D9CFF]/5 transition-all flex items-center justify-center group"
+            className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1 w-8 h-8 rounded-full bg-white shadow-md border border-gray-200 hover:border-[#2D9CFF] hover:bg-[#2D9CFF]/5 transition-all flex items-center justify-center group"
           >
-            <span className="text-lg text-gray-600 group-hover:text-[#2D9CFF]">
+            <span className="text-sm text-gray-600 group-hover:text-[#2D9CFF]">
               +
             </span>
           </button>
           <button
             onClick={() => setTemperature(Math.max(16, temperature - 0.5))}
-            className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-2 w-10 h-10 rounded-full bg-white shadow-lg border border-gray-200 hover:border-[#2D9CFF] hover:bg-[#2D9CFF]/5 transition-all flex items-center justify-center group"
+            className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1 w-8 h-8 rounded-full bg-white shadow-md border border-gray-200 hover:border-[#2D9CFF] hover:bg-[#2D9CFF]/5 transition-all flex items-center justify-center group"
           >
-            <span className="text-lg text-gray-600 group-hover:text-[#2D9CFF]">
+            <span className="text-sm text-gray-600 group-hover:text-[#2D9CFF]">
               −
             </span>
           </button>
         </div>
       </div>
 
-      {/* Airflow Control */}
-      <div className="w-full">
-        <div className="flex items-center justify-center gap-2 mb-4">
-          <Wind className="w-5 h-5 text-[#2D9CFF]" />
-          <span className="text-sm text-gray-600">풍량 조절</span>
+      {/* 3. 풍량 조절 (Airflow) */}
+      <div className="w-full mt-1">
+        <div className="flex items-center justify-center gap-1 mb-1">
+          <Wind className="w-3 h-3 text-[#2D9CFF]" />
+          <span className="text-xs text-gray-600">풍량</span>
         </div>
 
-        <div className="flex items-center justify-center gap-3">
+        <div className="flex items-center justify-center gap-2">
           {(["약", "중", "강"] as const).map((level) => (
             <button
               key={level}
               onClick={() => setAirflow(level)}
-              className={`px-6 py-3 rounded-2xl transition-all ${
+              className={`px-3 py-1 text-xs rounded-xl transition-all ${
                 airflow === level
-                  ? "bg-[#2D9CFF] text-white shadow-lg shadow-[#2D9CFF]/30"
+                  ? "bg-[#2D9CFF] text-white shadow-md shadow-[#2D9CFF]/30"
                   : "bg-white text-gray-600 hover:bg-gray-50 border border-gray-200"
               }`}
             >
@@ -144,9 +148,9 @@ export default function ClimateControl() {
         </div>
       </div>
 
-      {/* Status Info */}
-      <div className="text-xs text-gray-500 text-center">
-        외부온도 25°C | 자동모드 ON
+      {/* 4. 하단 상태 정보 */}
+      <div className="text-[10px] text-gray-400 text-center">
+        자동모드 ON
       </div>
     </div>
   );

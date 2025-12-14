@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Sparkles, ArrowUp, ArrowDown } from "lucide-react";
+import { ArrowUp, ArrowDown } from "lucide-react";
 import { useVoiceCommand } from "../context/VoiceCommandContext";
 
 type ControlTarget = "backrest" | "height" | "position";
@@ -72,26 +72,30 @@ export default function SeatVisualization() {
   };
 
   const centerLabel = {
-    backrest: "등받이 각도",
-    height: "시트 높이",
-    position: "전후 위치",
+    backrest: "등받이", // 텍스트를 짧게 줄임 (등받이 각도 -> 등받이)
+    height: "높이",
+    position: "위치", // (전후 위치 -> 위치)
   }[target];
 
+  // Indicator 점 크기 축소 (w-8 -> w-5)
   const IndicatorDot = ({ delay = 0 }: { delay?: number }) => (
     <motion.div
-      className="w-8 h-8 rounded-full bg-[#2D9CFF]/20 flex items-center justify-center"
+      className="w-5 h-5 rounded-full bg-[#2D9CFF]/20 flex items-center justify-center shrink-0"
       animate={{ scale: [1, 1.2, 1] }}
       transition={{ duration: 2, repeat: Infinity, delay }}
     >
-      <div className="w-4 h-4 rounded-full bg-[#2D9CFF]" />
+      <div className="w-2 h-2 rounded-full bg-[#2D9CFF]" />
     </motion.div>
   );
 
   return (
-    <div className="relative flex flex-col items-center justify-center h-full">
+    // 전체 컨테이너: justify-evenly로 상하 여백 자동 분배
+    <div className="relative flex flex-col items-center justify-evenly h-full w-full py-1">
+      
       {/* ================= Seat SVG ================= */}
-      <div className="relative w-64 h-80 mt-16">
-        <svg viewBox="0 0 200 280" className="w-full h-full drop-shadow-2xl">
+      {/* 크기 대폭 축소: w-64 -> w-28 (112px), h-80 -> h-36 (144px) */}
+      <div className="relative w-28 h-36">
+        <svg viewBox="0 0 200 280" className="w-full h-full drop-shadow-lg">
           <defs>
             <linearGradient id="seatGradient" x1="0%" y1="0%" x2="0%" y2="100%">
               <stop offset="0%" stopColor="#F5F5F7" />
@@ -106,7 +110,7 @@ export default function SeatVisualization() {
                Q 150 35 140 40 Z"
             fill="url(#seatGradient)"
             stroke="#C0C0C5"
-            strokeWidth="1"
+            strokeWidth="2"
           />
 
           {/* Headrest */}
@@ -117,7 +121,7 @@ export default function SeatVisualization() {
             ry="15"
             fill="url(#seatGradient)"
             stroke="#C0C0C5"
-            strokeWidth="1"
+            strokeWidth="2"
           />
 
           {/* Seat Cushion */}
@@ -130,7 +134,7 @@ export default function SeatVisualization() {
                L 50 145 Q 40 145 40 155 Z"
             fill="url(#seatGradient)"
             stroke="#C0C0C5"
-            strokeWidth="1"
+            strokeWidth="2"
           />
 
           {/* Armrests */}
@@ -141,7 +145,7 @@ export default function SeatVisualization() {
                Q 50 145 45 145 Z"
             fill="#D5D5D8"
             stroke="#C0C0C5"
-            strokeWidth="1"
+            strokeWidth="2"
           />
           <path
             d="M 155 145 Q 150 145 150 150 L 150 180 
@@ -150,62 +154,71 @@ export default function SeatVisualization() {
                Q 170 145 165 145 Z"
             fill="#D5D5D8"
             stroke="#C0C0C5"
-            strokeWidth="1"
+            strokeWidth="2"
           />
         </svg>
 
-        {/* Indicators */}
+        {/* Indicators: 위치 조정 및 텍스트/박스 크기 축소 */}
+        
+        {/* 1. 등받이 (Left) */}
         <motion.div
           onClick={() => setTarget("backrest")}
-          className="absolute -left-12 top-16 flex items-center gap-2 cursor-pointer"
+          // -left-12 -> -left-16 (SVG가 작아졌으므로 상대 위치 조정)
+          className="absolute -left-16 top-6 flex items-center gap-1 cursor-pointer z-10"
         >
-          <div className="bg-white/90 px-3 py-1.5 rounded-lg shadow-md border border-[#2D9CFF]/30">
-            <div className="text-xs text-gray-500">등받이 각도</div>
-            <div className="text-sm text-[#2D9CFF]">{backrestAngle}°</div>
+          <div className="bg-white/95 px-2 py-1 rounded-md shadow-sm border border-[#2D9CFF]/30 text-right min-w-[48px]">
+            <div className="text-[9px] text-gray-400">등받이</div>
+            <div className="text-[11px] font-bold text-[#2D9CFF]">{backrestAngle}°</div>
           </div>
           <IndicatorDot />
         </motion.div>
 
+        {/* 2. 높이 (Right) */}
         <motion.div
           onClick={() => setTarget("height")}
-          className="absolute -right-12 top-32 flex items-center gap-2 cursor-pointer"
+          className="absolute -right-16 top-14 flex items-center gap-1 cursor-pointer z-10"
         >
           <IndicatorDot delay={0.5} />
-          <div className="bg-white/90 px-3 py-1.5 rounded-lg shadow-md border border-[#2D9CFF]/30">
-            <div className="text-xs text-gray-500">시트 높이</div>
-            <div className="text-sm text-[#2D9CFF]">
-              {seatHeight > 0 ? `+${seatHeight}` : seatHeight} cm
+          <div className="bg-white/95 px-2 py-1 rounded-md shadow-sm border border-[#2D9CFF]/30 text-left min-w-[48px]">
+            <div className="text-[9px] text-gray-400">높이</div>
+            <div className="text-[11px] font-bold text-[#2D9CFF]">
+              {seatHeight > 0 ? `+${seatHeight}` : seatHeight}
             </div>
           </div>
         </motion.div>
 
+        {/* 3. 위치 (Bottom) */}
         <motion.div
           onClick={() => setTarget("position")}
-          className="absolute left-1/2 -translate-x-1/2 bottom-0 flex flex-col items-center gap-2 cursor-pointer"
+          // SVG 바로 아래에 딱 붙도록 bottom 값 조정
+          className="absolute left-1/2 -translate-x-1/2 -bottom-6 flex flex-col items-center gap-0.5 cursor-pointer z-10"
         >
           <IndicatorDot delay={1} />
-          <div className="bg-white/90 px-3 py-1.5 rounded-lg shadow-md border border-[#2D9CFF]/30">
-            <div className="text-xs text-gray-500">전후 위치</div>
-            <div className="text-sm text-[#2D9CFF]">
-              {seatPosition > 0 ? `+${seatPosition}` : seatPosition} cm
+          <div className="bg-white/95 px-2 py-0.5 rounded-md shadow-sm border border-[#2D9CFF]/30 text-center min-w-[48px]">
+            <div className="text-[9px] text-gray-400">위치</div>
+            <div className="text-[11px] font-bold text-[#2D9CFF]">
+              {seatPosition > 0 ? `+${seatPosition}` : seatPosition}
             </div>
           </div>
         </motion.div>
       </div>
 
       {/* ================= Bottom Controls ================= */}
-      <div className="flex justify-center gap-4 mt-10">
+      {/* 간격 좁힘: gap-4 -> gap-2 */}
+      <div className="flex justify-center gap-2 mt-4 shrink-0">
         <motion.button
           onClick={handleIncrease}
           whileTap={{ scale: 0.9 }}
-          className="w-14 h-14 bg-[#2D9CFF]/80 rounded-full flex items-center justify-center shadow-lg"
+          // 버튼 크기 축소: w-14 -> w-9 (36px)
+          className="w-9 h-9 bg-[#2D9CFF]/90 rounded-full flex items-center justify-center shadow-md hover:bg-[#2D9CFF]"
         >
-          <ArrowUp className="text-white" />
+          <ArrowUp className="w-5 h-5 text-white" />
         </motion.button>
 
         <motion.div
           key={target}
-          className="w-28 h-14 bg-[#2D9CFF] rounded-full flex items-center justify-center shadow-lg text-white font-semibold text-sm"
+          // 라벨 박스 크기 축소: w-28 -> w-20, h-14 -> h-9
+          className="w-20 h-9 bg-[#2D9CFF] rounded-full flex items-center justify-center shadow-md text-white font-bold text-xs"
         >
           {centerLabel}
         </motion.div>
@@ -213,9 +226,9 @@ export default function SeatVisualization() {
         <motion.button
           onClick={handleDecrease}
           whileTap={{ scale: 0.9 }}
-          className="w-14 h-14 bg-[#2D9CFF]/80 rounded-full flex items-center justify-center shadow-lg"
+          className="w-9 h-9 bg-[#2D9CFF]/90 rounded-full flex items-center justify-center shadow-md hover:bg-[#2D9CFF]"
         >
-          <ArrowDown className="text-white" />
+          <ArrowDown className="w-5 h-5 text-white" />
         </motion.button>
       </div>
     </div>
