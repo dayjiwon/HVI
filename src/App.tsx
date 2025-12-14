@@ -1,11 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import React from "react";
-
 import MainDad from "./pages/home/MainDad";
 import MainMom from "./pages/home/MainMom";
 import { VoiceCommandProvider } from "./context/VoiceCommandContext";
-// 방금 만든 ScaleWrapper를 import 합니다. 경로를 확인해주세요.
 import ScaleWrapper from "./components/ScaleWrapper"; 
 
 export default function App() {
@@ -13,19 +11,96 @@ export default function App() {
   const [user, setUser] = useState<null | "user1" | "user2">(null);
   const [pin, setPin] = useState("");
   const [error, setError] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null); // video ref 추가
+  const [isStreaming, setIsStreaming] = useState(false);
 
   const PASSWORDS = {
     user1: "1301",
     user2: "1302",
   };
 
-  // 얼굴 인식 (실제는 WebSocket)
+  // 얼굴 인식
   useEffect(() => {
     if (phase === "face") {
+      // 카메라 스트리밍 시작 함수
+      const startCamera = async () => {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+          if (videoRef.current) {
+            // video.srcObject 리셋 (새로 시작할 때마다)
+            videoRef.current.srcObject = stream;
+            setIsStreaming(true);
+          }
+        } catch (err) {
+          console.error("Camera access denied:", err);
+        }
+      };
+
+      startCamera(); // 카메라 시작
+
       setTimeout(() => {
-        // 실제라면 Python → React로 받은 user 정보를 사용
-        setUser("user1");
-        setPhase("pin");
+        const processFaceRecognition = async () => {
+          try {
+            const video = videoRef.current;
+            if (!video) return;
+
+            const canvas = document.createElement("canvas");
+            const context = canvas.getContext("2d");
+            if (!context) return;
+
+            // 비디오 프레임을 캔버스에 그리기
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            // 캔버스 이미지를 Blob으로 변환하여 서버로 전송
+            const blob = await new Promise<Blob | null>((resolve) =>
+              canvas.toBlob(resolve, "image/jpeg")
+            );
+            if (!blob) return;
+
+            const formData = new FormData();
+            formData.append("image", blob, "face.jpg");
+
+            for (let [key, value] of formData.entries()) {
+              if (value instanceof File) {
+                console.log(`${key}: Name - ${value.name}, Type - ${value.type}, Size - ${value.size}`);
+              } else {
+                console.log(`${key}: ${value}`);
+              }
+            }
+
+            const res = await fetch("http://localhost:8000/api/v1/face/recognize", {
+              method: "POST",
+              body: formData,
+            });
+
+            const data = await res.json();
+            console.log("Face recognition result:", data);
+
+            if (data.success) {
+              // 1. 인식이 성공했을 때 (등록된 사용자)
+              if (data.user_id === "강민우") {
+                setUser("user1"); // 아빠
+              } else if (data.user_id === "박준용") {
+                setUser("user2"); // 엄마
+              } else {
+                setUser("user1"); 
+              }
+              setPhase("pin"); 
+            } else {
+              console.log("인식 실패, 기본값(아빠)으로 진행합니다.");
+              setUser("user1"); 
+              setPhase("pin");
+            }}
+          catch (error) {
+            console.error("Error during face recognition:", error);
+            setError(true);
+            setPhase("face");
+          }
+        };
+
+        processFaceRecognition();
       }, 2000);
     }
   }, [phase]);
@@ -72,12 +147,17 @@ export default function App() {
             animate={{ scale: [1, 1.1, 1] }}
             transition={{ duration: 1.2, repeat: Infinity }}
           >
-            <div className="text-[#2D9CFF] text-lg font-semibold">
-              얼굴 인식 중…
-            </div>
+            {/* 비디오가 동그란 영역에 들어가도록 하기 */}
+            <video
+              ref={videoRef}
+              autoPlay
+              muted
+              playsInline
+              className="w-full h-full object-cover rounded-full"
+            />
           </motion.div>
           <div className="mt-6 text-gray-600 text-sm">
-            사용자 식별을 진행하고 있습니다.
+            사용자 식별을 진행하고 있습니다...
           </div>
         </div>
       );
@@ -187,8 +267,6 @@ export default function App() {
     return null;
   };
 
-  // ★ ScaleWrapper 적용: designWidth/Height에 원래 디자인했던 해상도를 입력하세요.
-  // 예: PC 전체화면 기준이었다면 1920 x 1080
   return (
     <ScaleWrapper designWidth={800} designHeight={480}>
       {renderContent()}
