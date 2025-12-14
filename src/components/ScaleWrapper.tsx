@@ -8,8 +8,8 @@ interface ScaleWrapperProps {
 
 export default function ScaleWrapper({
   children,
-  designWidth = 1920, // 만약 1280 해상도로 디자인했다면 1280으로 수정하세요
-  designHeight = 1080,
+  designWidth = 800, // 만약 1280 해상도로 디자인했다면 1280으로 수정하세요
+  designHeight = 480,
 }: ScaleWrapperProps) {
   const [scale, setScale] = useState(1);
 
