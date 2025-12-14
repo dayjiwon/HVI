@@ -1,9 +1,7 @@
 chromium-browser \
   --kiosk \
-  --disable-gpu \
+  --start-fullscreen \
   --disable-infobars \
   --noerrdialogs \
-  --force-device-scale-factor=1 \
-  --window-position=0,0 \
-  --window-size=800,400 \
-  http://127.0.0.1:3000
+  --disable-session-crashed-bubble \
+  http://localhost:3000
