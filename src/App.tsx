@@ -5,6 +5,8 @@ import React from "react";
 import MainDad from "./pages/home/MainDad";
 import MainMom from "./pages/home/MainMom";
 import { VoiceCommandProvider } from "./context/VoiceCommandContext";
+// 방금 만든 ScaleWrapper를 import 합니다. 경로를 확인해주세요.
+import ScaleWrapper from "./components/ScaleWrapper"; 
 
 export default function App() {
   const [phase, setPhase] = useState<"face" | "pin" | "main">("face");
@@ -17,14 +19,11 @@ export default function App() {
     user2: "1302",
   };
 
-  // 미니 터치스크린 감지
-  const isMini =
-    window.innerHeight < 600 || window.innerWidth < 900;
-
   // 얼굴 인식 (실제는 WebSocket)
   useEffect(() => {
     if (phase === "face") {
       setTimeout(() => {
+        // 실제라면 Python → React로 받은 user 정보를 사용
         setUser("user1");
         setPhase("pin");
       }, 2000);
@@ -62,135 +61,137 @@ export default function App() {
     setError(false);
   };
 
-  // 1️⃣ 얼굴 인식 UI
-  if (phase === "face") {
-    return (
-      <div className="w-full h-screen flex flex-col items-center justify-center bg-gradient-to-br from-[#F7F8FA] to-[#E8EBEF]">
-        <motion.div
-          className="w-32 h-32 bg-white/60 backdrop-blur-xl rounded-full border border-white/50 shadow-xl flex items-center justify-center"
-          animate={{ scale: [1, 1.1, 1] }}
-          transition={{ duration: 1.2, repeat: Infinity }}
-        >
-          <div className="text-[#2D9CFF] text-base font-semibold">
-            얼굴 인식 중…
-          </div>
-        </motion.div>
-        <div className="mt-4 text-gray-600 text-sm">
-          사용자 식별을 진행하고 있습니다.
-        </div>
-      </div>
-    );
-  }
-
-  // 2️⃣ PIN UI
-  if (phase === "pin") {
-    const bgClass =
-      user === "user1"
-        ? "bg-gradient-to-br from-[#F7F8FA] to-[#E8EBEF]"
-        : "bg-gradient-to-br from-pink-50 via-blue-50 to-purple-50";
-
-    const cardClass =
-      user === "user1"
-        ? "bg-white/60 backdrop-blur-xl"
-        : "bg-white/50 backdrop-blur-md border-pink-200";
-
-    const titleColor =
-      user === "user1" ? "text-gray-700" : "text-pink-700";
-
-    const keypadButtonClass =
-      user === "user1"
-        ? "bg-white/70 backdrop-blur-md"
-        : "bg-white/60 backdrop-blur-md border border-pink-200";
-
-    return (
-      <div
-        className={`w-full h-screen flex justify-center ${bgClass} overflow-y-auto`}
-      >
-        <div
-          className={`${
-            isMini ? "w-[95vw] p-3" : "w-80 p-8"
-          } my-6 rounded-2xl shadow-xl border border-white/50 text-center ${cardClass}`}
-        >
-          <h2 className={`text-lg font-semibold mb-1 ${titleColor}`}>
-            {user === "user1" ? "아빠" : "엄마"} 인증
-          </h2>
-
-          <button
-            onClick={switchUser}
-            className="text-xs underline text-gray-500 mb-2"
-          >
-            다른 사용자로 전환
-          </button>
-
-          {/* PIN 표시부 */}
+  // 렌더링할 내용을 별도 함수로 분리 (ScaleWrapper 내부로 넣기 위해)
+  const renderContent = () => {
+    // 1. 얼굴 인식 UI
+    if (phase === "face") {
+      return (
+        <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-[#F7F8FA] to-[#E8EBEF]">
           <motion.div
-            className={`w-full py-2 mb-2 text-2xl tracking-widest rounded-xl bg-white/80 border ${
-              error
-                ? "border-red-400 text-red-500"
-                : "border-gray-300 text-gray-700"
-            }`}
-            animate={error ? { x: [-6, 6, -6, 6, 0] } : {}}
-            transition={{ duration: 0.25 }}
+            className="w-40 h-40 bg-white/60 backdrop-blur-xl rounded-full border border-white/50 shadow-xl flex items-center justify-center"
+            animate={{ scale: [1, 1.1, 1] }}
+            transition={{ duration: 1.2, repeat: Infinity }}
           >
-            {pin.split("").map(() => "●").join("")}
-          </motion.div>
-
-          {error && (
-            <div className="text-xs text-red-500 mb-2">
-              비밀번호가 일치하지 않습니다.
+            <div className="text-[#2D9CFF] text-lg font-semibold">
+              얼굴 인식 중…
             </div>
-          )}
-
-          {/* 숫자 키패드 */}
-          <div className="grid grid-cols-3 gap-3 font-semibold">
-            {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => (
-              <button
-                key={n}
-                onClick={() => handleKeyPress(n.toString())}
-                className={`w-full ${
-                  isMini ? "h-12 text-lg" : "h-16 text-xl"
-                } rounded-full shadow-md transition flex items-center justify-center ${keypadButtonClass}`}
-              >
-                {n}
-              </button>
-            ))}
-
-            <div></div>
-
-            <button
-              onClick={() => handleKeyPress("0")}
-              className={`w-full ${
-                isMini ? "h-12 text-lg" : "h-16 text-xl"
-              } rounded-full shadow-md transition flex items-center justify-center ${keypadButtonClass}`}
-            >
-              0
-            </button>
-
-            <button
-              onClick={handleDelete}
-              className={`w-full ${
-                isMini ? "h-12 text-base" : "h-16 text-lg"
-              } rounded-full shadow-md transition flex items-center justify-center ${keypadButtonClass}`}
-            >
-              ←
-            </button>
+          </motion.div>
+          <div className="mt-6 text-gray-600 text-sm">
+            사용자 식별을 진행하고 있습니다.
           </div>
         </div>
-      </div>
-    );
-  }
+      );
+    }
 
-  // 3️⃣ 메인 UI
-  if (phase === "main") {
-    return (
-      <VoiceCommandProvider>
-        <div className="w-full h-screen overflow-hidden">
+    // 2. PIN UI
+    if (phase === "pin") {
+      const bgClass =
+        user === "user1"
+          ? "bg-gradient-to-br from-[#F7F8FA] to-[#E8EBEF]"
+          : "bg-gradient-to-br from-pink-50 via-blue-50 to-purple-50";
+
+      const cardClass =
+        user === "user1"
+          ? "bg-white/60 backdrop-blur-xl"
+          : "bg-white/50 backdrop-blur-md border-pink-200";
+
+      const titleColor = user === "user1" ? "text-gray-700" : "text-pink-700";
+
+      const keypadButtonClass =
+        user === "user1"
+          ? "bg-white/70 backdrop-blur-md"
+          : "bg-white/60 backdrop-blur-md border border-pink-200";
+
+      return (
+        <div
+          className={`w-full h-full flex items-center justify-center ${bgClass}`}
+        >
+          <div
+            className={`w-80 p-8 rounded-3xl shadow-xl border border-white/50 text-center ${cardClass}`}
+          >
+            <h2 className={`text-xl font-semibold mb-2 ${titleColor}`}>
+              {user === "user1" ? "아빠" : "엄마"} 인증
+            </h2>
+
+            <button
+              onClick={switchUser}
+              className="text-xs underline text-gray-500 mb-4"
+            >
+              다른 사용자로 전환
+            </button>
+
+            {/* PIN 표시부 */}
+            <motion.div
+              className={`w-full h-full py-3 mb-4 text-3xl tracking-widest rounded-2xl bg-white/80 border ${
+                error
+                  ? "border-red-400 text-red-500"
+                  : "border-gray-300 text-gray-700"
+              }`}
+              animate={error ? { x: [-10, 10, -10, 10, 0] } : {}}
+              transition={{ duration: 0.3 }}
+            >
+              {pin
+                .split("")
+                .map(() => "●")
+                .join("")}
+            </motion.div>
+
+            {error && (
+              <div className="text-sm text-red-500 mb-3">
+                비밀번호가 일치하지 않습니다.
+              </div>
+            )}
+
+            {/* 숫자 키패드 */}
+            <div className="grid grid-cols-3 gap-4 font-semibold">
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => (
+                <button
+                  key={n}
+                  onClick={() => handleKeyPress(n.toString())}
+                  className={`w-full h-16 rounded-full shadow-md text-xl hover:bg-white transition flex items-center justify-center ${keypadButtonClass}`}
+                >
+                  {n}
+                </button>
+              ))}
+
+              <div></div>
+
+              <button
+                onClick={() => handleKeyPress("0")}
+                className={`w-full h-16 rounded-full shadow-md text-xl hover:bg-white transition flex items-center justify-center ${keypadButtonClass}`}
+              >
+                0
+              </button>
+
+              <button
+                onClick={handleDelete}
+                className={`w-full h-16 rounded-full shadow-md text-lg hover:bg-white transition flex items-center justify-center ${keypadButtonClass}`}
+              >
+                ←
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // 3. 메인 UI
+    if (phase === "main") {
+      return (
+        <VoiceCommandProvider>
           {user === "user1" && <MainDad />}
           {user === "user2" && <MainMom />}
-        </div>
-      </VoiceCommandProvider>
-    );
-  }
+        </VoiceCommandProvider>
+      );
+    }
+    return null;
+  };
 
-  return null;
+  // ★ ScaleWrapper 적용: designWidth/Height에 원래 디자인했던 해상도를 입력하세요.
+  // 예: PC 전체화면 기준이었다면 1920 x 1080
+  return (
+    <ScaleWrapper designWidth={1920} designHeight={1080}>
+      {renderContent()}
+    </ScaleWrapper>
+  );
 }
