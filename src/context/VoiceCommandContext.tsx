@@ -15,7 +15,7 @@ export const VoiceCommandProvider = ({
 }: {
   children?: React.ReactNode;
 }) => {
-  const [command, setCommand] = useState<VoiceCommand>(null);
+  const [command, setCommand] = useState<VoiceCommand | null>(null);
 
   return (
     <VoiceCommandContext.Provider value={{ command, emit: setCommand }}>
