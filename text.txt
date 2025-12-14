@@ -1,0 +1,9 @@
+chromium-browser \
+  --kiosk \
+  --disable-gpu \
+  --disable-infobars \
+  --noerrdialogs \
+  --force-device-scale-factor=1 \
+  --window-position=0,0 \
+  --window-size=800,400 \
+  http://127.0.0.1:3000
