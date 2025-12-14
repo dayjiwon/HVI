@@ -62,7 +62,7 @@ export default function App() {
   // 1. 얼굴 인식 UI
   if (phase === "face") {
     return (
-      <div className="w-full h-screen flex flex-col items-center justify-center bg-gradient-to-br from-[#F7F8FA] to-[#E8EBEF]">
+      <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-[#F7F8FA] to-[#E8EBEF]">
         <motion.div
           className="w-40 h-40 bg-white/60 backdrop-blur-xl rounded-full border border-white/50 shadow-xl flex items-center justify-center"
           animate={{ scale: [1, 1.1, 1] }}
@@ -120,7 +120,7 @@ export default function App() {
 
           {/* PIN 표시부 */}
           <motion.div
-            className={`w-full py-3 mb-4 text-3xl tracking-widest rounded-2xl bg-white/80 border ${
+            className={`w-full h-full py-3 mb-4 text-3xl tracking-widest rounded-2xl bg-white/80 border ${
               error
                 ? "border-red-400 text-red-500"
                 : "border-gray-300 text-gray-700"
